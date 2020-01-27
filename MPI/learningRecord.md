@@ -1,4 +1,5 @@
 1. 程序的开始与结束
+
 ``int MPI_Init(int *argc, char **argv)``
 通过MPI_Init函数进入MPI环境并完成初始化工作，标志并行代码的开始
 ``int MPI_Finalize(void)``
@@ -28,10 +29,49 @@ char *name;  #返回处理器名
 int *resultlen;  #在name中返回结果的长度
 ```
 
-5. 运行时间
-
-``double MPI_Wtime(void) //计算运行时间``
+5. 运行时间ouble MPI_Wtime(void) //计算运行时间``
 
 ``double MPI_Wtick(void) //查看时间的精度``
 
+6. 同步
 
+``int MPI_Barrier(MPI_Comm comm)``  
+
+7. 消息传递
+
+
+``double MPI_Wtick(void) //查看时间的精度``
+
+8. 消息传递
+
+``int MPI_Send(void* msg_buf_p, int msg_size, MPI_Datatype msg_type, int dest, int tag, MPI_Comm communicator)``
+```
+void* msg_buf_p: 发送缓冲区的起始地址；
+int buf_size: 缓冲区大小；
+MPI_Datatype msg_type: 发送信息的数据类型
+int dest: 目标进程的id值;
+int tag: 消息标签;
+MPI_Comm communicator: 通信子
+
+``int MPI_Recv(void* msg_buf_p, int buf_size, MPI_Datatype msg_type, int source, int tag, MPI_Comm communicator， MPI_Status *status_p)``
+```
+void* msg_buf_p ： 缓冲区的起始地址；
+int buf_size ： 缓冲区大小；
+MPI_Datatype msg_type ： 发送信息的数据类型；
+int dest ：目标进程的id值；
+int tag ： 消息标签；
+MPI_Comm communicator ： 通信子；
+MPI_Status *status_p ： status_p对象，包含实际接收到的消息的有关信息
+```
+
+9. 地址偏移量
+
+MPI_ADDRESS: 获得一个位置在内存中的地址
+```
+int MPI_Address(void *location, MPI_Aint *address)
+
+void *location: 调用者的内存位置；
+MPI_Aint *address: 位置的对应地址
+```
+
+10. 
