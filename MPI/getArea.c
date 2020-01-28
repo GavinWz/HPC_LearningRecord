@@ -8,34 +8,34 @@ double Trap(double a, double b, int n, double h);
 int main(int argc, char* argv[]){
     int a = 0, b = 32, n = 32;
     int comm_sz, my_rank;
+    double total_integral, local_integral;
+
     double h = (b - a) / (double)n;
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &comm_sz);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-    // printf("my_rank = %d, comm_sz = %d\n", my_rank, comm_sz);
+
+    printf("my_rank = %d, comm_sz = %d\n", my_rank, comm_sz);
     int local_n = n / comm_sz;
     double local_a = a + my_rank * local_n * h;
     double local_b = local_a + local_n * h;
-    
-    // printf("%f, %f, %d， %f\n", local_a, local_b, local_n, h);
-    double local_integral = Trap(local_a, local_b, local_n, h);
-    // printf("%f\n", local_integral);
+    local_integral = Trap(local_a, local_b, local_n, h);
+
     if(my_rank != 0){
-        MPI_Send(&local_integral, sizeof(local_integral), MPI_DOUBLE, 
-            0, 1, MPI_COMM_WORLD);
+        MPI_Send(&local_integral, 1, MPI_DOUBLE, 
+            0, 0, MPI_COMM_WORLD);
     }
     else{
-        double total_integral = local_integral;
-        printf("1. %f,%f\n", local_integral, total_integral);
-        for(int i = 1; i <= comm_sz; i++){
-            MPI_Recv(&local_integral, 8, MPI_DOUBLE, MPI_ANY_SOURCE, 
-                1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            total_integral = total_integral + local_integral;
-            printf("3. %f,%f\n", local_integral, total_integral);
+        total_integral = local_integral;
+        double receive;
+        for(int i = 1; i < comm_sz; i++){
+            MPI_Recv(&local_integral, 1, MPI_DOUBLE, i, 0, 
+                MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            total_integral += local_integral;
         }
-        printf("%lf", total_integral);
+        printf("%lf\n", total_integral);
     }
-    // MPI_Finalized();
+    // MPI_Finalize();
     return 0;
 }
 
