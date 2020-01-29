@@ -16,11 +16,12 @@ int main(int argc, char* argv[]){
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
     printf("my_rank = %d, comm_sz = %d\n", my_rank, comm_sz);
-    int local_n = n / comm_sz;
+    int local_n = n / comm_sz; //Suppose n is divisible by comm_sz
     double local_a = a + my_rank * local_n * h;
     double local_b = local_a + local_n * h;
     local_integral = Trap(local_a, local_b, local_n, h);
 
+    /* way 1 */
     if(my_rank != 0){
         MPI_Send(&local_integral, 1, MPI_DOUBLE, 
             0, 0, MPI_COMM_WORLD);
@@ -35,7 +36,14 @@ int main(int argc, char* argv[]){
         }
         printf("%lf", total_integral);
     }
-    // MPI_Finalize();
+
+    /* way two */
+    // MPI_Reduce(&local_integral, &total_integral, 1, MPI_DOUBLE, 
+    //     MPI_SUM, 0, MPI_COMM_WORLD);
+    // if(my_rank == 0)
+    // printf("%lf", total_integral);
+
+    MPI_Finalize();
     return 0;
 }
 

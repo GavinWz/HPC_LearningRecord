@@ -75,13 +75,13 @@ MPI_Aint *address: 位置的对应地址
 ```
 
 10. 集合通信函数
-```
+```                                                      
 int MPI_Reduce(
-    void* input_data_p,
-    void* output_data_p,
-    int count,
-    MPI_Datatype datatype,
-    MPI_OP operator,
-    int dest_process,
+    void* input_data_p,     //每个线程需要提供的计算数据
+    void* output_data_p,    //返回计算结果
+    int count,              //每个线程提供的数据量
+    MPI_Datatype datatype,  //数据类型
+    MPI_OP operator,        //归约操作符
+    int dest_process,       //在指定线程中返回
     MPI_Comm comm);
 ```
