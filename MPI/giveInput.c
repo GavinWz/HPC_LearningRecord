@@ -31,6 +31,6 @@ int main(){
     Get_input(my_rank, comm_sz, &a, &b, &n);
     if(my_rank != 0)
         printf("I'm rank %d of %d.\na = %lf, b = %lf, n = %d\n", my_rank, comm_sz, a, b, n);
-
+    MPI_Finalize();
 }
 
