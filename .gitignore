@@ -1,5 +1,5 @@
-.o
-.s
-.class
-.out
+*.o
+*.s
+*.class
+*.out
 
