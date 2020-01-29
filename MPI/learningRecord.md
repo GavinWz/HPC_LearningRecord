@@ -74,4 +74,14 @@ void *location: 调用者的内存位置；
 MPI_Aint *address: 位置的对应地址
 ```
 
-10. 
+10. 集合通信函数
+```
+int MPI_Reduce(
+    void* input_data_p,
+    void* output_data_p,
+    int count,
+    MPI_Datatype datatype,
+    MPI_OP operator,
+    int dest_process,
+    MPI_Comm comm);
+```
