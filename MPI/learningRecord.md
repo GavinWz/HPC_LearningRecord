@@ -129,6 +129,22 @@ int MPI_Bcast(
     int count,
     MPI_Datatype datatype,
     int source_proc,
-    MPI_Comm comm)
+    MPI_Comm comm
+);
 ```
 进程号为cource_proc的进程将data_p所引用的内存内容发送给通信子comm中的所有进程
+
+12. 散射
+```c
+imt MPI_Scatter(
+    void*           send_buf_p, //需要处理的整体数据
+    int             send_count, //发送到每个进程的数据量
+    MPI_Datatype    send_type,
+    void*           recv_buf_p, //本地定义的数组或其他容器用来存储分得的数据
+    int             recv_count, //每个进程分得的数据量
+    MPI_Datatype    recv_type,
+    int             src_proc,   //负责读取和分发数据的进程
+    MPI_Comm        comm
+);
+```
+若通信子comm包含comm_sz个进程，那么MPI_Scatter函数会将send_buf_p所引用的数据分成comm_sz份，第一份分给0号进程，第二分分给1号进程……以此类推。
