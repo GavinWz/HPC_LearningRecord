@@ -33,7 +33,7 @@ int MPI_Comm_rank(MPI_Comm comm, int *rank)`
 
 4. 获取处理器
 
-```
+```c
 int MPI_Get_processor_name(char *name, int *resultlen)
 char *name;  #返回处理器名
 int *resultlen;  #在name中返回结果的长度
