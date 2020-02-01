@@ -5,7 +5,7 @@
 void Read_vector(
         double local_a[],
         int local_n,
-        int n,  //总体数据量
+        int n,  
         char vec_name[],
         int my_rank,
         MPI_Comm comm);
@@ -27,7 +27,7 @@ int main(){
 void Read_vector(
         double local_a[],
         int local_n,
-        int n,  //总体数据量
+        int n,  
         char vec_name[],
         int my_rank,
         MPI_Comm comm){
