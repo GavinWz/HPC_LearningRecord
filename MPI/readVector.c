@@ -32,23 +32,24 @@ void Read_vector(
         int my_rank,
         MPI_Comm comm){
     double *a = NULL;
+    local_a = malloc(local_n*sizeof(double));
     int i;
     if(my_rank == 0){
         a = malloc(n*sizeof(double));
-        printf("Input the vector %s\n", vec_name);
         for(i = 0; i < n; i++){
-            // scanf("%lf", &a[i]);
             a[i] = i + 1;
         }
         MPI_Scatter(a, local_n, MPI_DOUBLE, local_a, 
             local_n, MPI_DOUBLE, 0, comm);
+        for(i = 0; i < local_n; i++)
+            printf("%lf\n", local_a[i]);
         free(a);
     }
     else{
         MPI_Scatter(a, local_n, MPI_DOUBLE, local_a, 
             local_n, MPI_DOUBLE, 0, comm);
         for(i = 0; i < local_n; i++)
-            printf("%lf", local_a[i]);
+            printf("%lf\n", local_a[i]);
     }
     
 }
