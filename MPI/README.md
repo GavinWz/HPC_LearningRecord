@@ -180,3 +180,4 @@ int MPI_Gather(
     MPI_Comm        comm
 );
 ```
+在指定线程dest_proc中收集当前线程传来的数据，保存在大小为recv_count的recv_type类型数组recv_count中
