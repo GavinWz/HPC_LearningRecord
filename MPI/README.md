@@ -243,5 +243,21 @@ int MPI_Pack(
     MPI_Comm, comm //通信子
 );
 
+int MPI_Unpack(
+    void* inbuf,             // 指向待解包缓冲区的指针
+    int insize,              // 缓冲区大小（单位为 Byte）
+    int* position,           // 输出缓冲区中第一个用于打包的位置（地址偏移量）
+    void* outbuf,            // 指向解包后数据的指针 
+    int outcount,            // 解包元素个数    
+    MPI_Datatype datatype,   // 数据类型
+    MPI_Comm comm            // 通信子
+ );
+```
+
+缓冲区的类型任意, 意在分配指定大小的空间足够打包解包时使用, position大小随打包和解包增加和减少
+
+打包完成后可以通过MPI_Send等发送数据的函数将输入缓冲区**outbuf**发送到其他线程,类型为**MPI_PACKED**
+
+接收函数MPI_Recv等接收到其他线程发来的包后,需要对其进行解包操作,提取出相应的数据后才能进行下一步操作
 
 
