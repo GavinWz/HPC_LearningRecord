@@ -181,3 +181,67 @@ int MPI_Gather(
 );
 ```
 在指定线程dest_proc中收集当前线程传来的数据，保存在大小为recv_count的recv_type类型数组recv_count中
+
+14. 派生数据类型
+
+一个派生数据类型是由一系列的MPI基本数据类型和每个数据类型的偏移所组成的
+
+假设一个进程里变量a,b,n和它们在内存中的位置如下
+变量|地址
+--|--
+a|24
+b|40
+n|48
+则可以用以下的派生数据类型表示这些数据项：
+
+{(MPI_DOUBLE,0),(MPI_DOUBLE,16),(MPI_INT,24)}
+
+每组数据的第二个元素是该数据项相对于起始位置的偏移, 即为当前数据与起始数据的内存地址差值。
+
+可以用MPI_Type_creaate_struct函数创建有不同基本数据类型的元素组成的派生数据类型。
+
+```c
+int MPI_Type_create_struct(
+    int count, //数据类型中元素的个数
+    int array_of_blocklengths[]， //允许单独的数据项可以是个数组,每个元素表示数组长度
+    MPI_Aint array_of_displacements[]，//距离消息起始位置的偏移量,单位为字节
+    MPI_Datatype array_of_types[],//数据类型
+    MPI_Datatype* new_type_p  //函数建立的新的数据类型
+);
+```
+可以使用MPI_Get_address函数来找到制定元素的内存地址
+```
+int MPI_Get_address(
+    voiod* location_p,
+    MPI_Aint* adddress_p
+);
+```
+MPI_Aint是个长整数型, address_p返回location_p所指向的内存单元的地址
+
+生成新的数据类型之后需要调用函数MPI_Type_commit去指定它:
+```c
+int MPI_Type_commit(MPI_Datatype* new_mpi_t_p);
+```
+
+调用派生数据类型: 以MPI_Bcast测试:
+```c
+MPI_Bcast(&a, 1, input_mpi_t, 0, comm);
+```
+
+15. 数据的打包(Pack)
+
+将不连续的数据或是不相同的数据类型的数据一起发送到其它进程
+
+```c
+int MPI_Pack(
+    void* inbuf,  //待打包的数据
+    int incount,  //打包的数据量
+    MPI_Datatype datatype, //数据项的类型
+    void *outbuf,  //输入冲区地址
+    int outcount,  //输入缓冲区大小
+    int *position, //缓冲区第一个用于打包的位置
+    MPI_Comm, comm //通信子
+);
+
+
+

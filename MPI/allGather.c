@@ -67,6 +67,3 @@ int main(){
         printf("answer = %lf\n", sum);
     }
 }
-
-
-

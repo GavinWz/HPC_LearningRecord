@@ -1,20 +1,43 @@
-#include<stdio.h>
-#include<math.h>
+#include <stdio.h>
+#include <mpi.h>
 
-double f(double num){
-    return num;
-}
+int main(int argc, char **argv)
+{
+	int myid, numprocs, source;
+	MPI_Status status;
+	int i, j, position;
+	int k[2];
+	int buf[1000];
 
-double Trap(double a, double b, int n, double h){
-    double area = 0;
-    for(int i = 0; i <= n-1; i++){
-        double add = (f(a+i*h) + f(a+(i+1)*h)) / 2.0 * h;
-        printf("%lf\n", add);
-        area += add;
-    }
-    return area;
-}
+	MPI_Init(&argc, &argv);
+	MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+    MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+    
+    i = 1;
+    j = 2;
+    
+    if(myid == 0) {
+        
+        position = 0 ;
+        
+    	// your code here
+    	MPI_Pack(&i, 1, MPI_INT, buf, 1000, &position, MPI_COMM_WORLD); 
+        MPI_Pack(&j, 1, MPI_INT, buf, 1000, &position, MPI_COMM_WORLD); 
+    	// end of your code
+    	
+    	MPI_Send(buf, position, MPI_PACKED, 1, 99, MPI_COMM_WORLD); 
+	}
+	else if (myid == 1){ 
+		MPI_Recv(k, 2, MPI_INT, 0, 99, MPI_COMM_WORLD, &status);
+		
+		position = 0 ;
+		
+		MPI_Unpack(k, 2, &position, &i, 1, MPI_INT, MPI_COMM_WORLD);
+		MPI_Unpack(k, 2, &position, &j, 1, MPI_INT, MPI_COMM_WORLD);
+		
+		printf("The number is %d and %d", i, j);
+	}
 
-int main(){
-    printf("%lf", Trap(0, 32, 32, 1));
+	MPI_Finalize();
+	return 0;
 }
