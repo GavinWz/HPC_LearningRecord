@@ -6,7 +6,8 @@
 int main(int argc, char* argv[]){
     int comm_sz, my_rank;
     MPI_Status status;
-    int i, j, position;
+    int i, position;
+    double j;
     int k[5];      //输出缓冲区
     int buf[100];  //输入缓冲区
 
@@ -20,20 +21,20 @@ int main(int argc, char* argv[]){
         j = 2;
         MPI_Pack(&i, 1, MPI_INT, buf, 100, 
             &position, MPI_COMM_WORLD);
-        MPI_Pack(&j, 1, MPI_INT, buf, 100, 
+        MPI_Pack(&j, 1, MPI_DOUBLE, buf, 100, 
             &position, MPI_COMM_WORLD);
         MPI_Send(buf, position, MPI_PACKED,
             1, 99, MPI_COMM_WORLD);
     }
     else{
-        MPI_Recv(k, 2, MPI_INT, 0, 99,
+        MPI_Recv(k, 2, MPI_DOUBLE, 0, 99,
             MPI_COMM_WORLD, &status);
         position  = 0;
         MPI_Unpack(k, 2, &position, &i, 
             1, MPI_INT, MPI_COMM_WORLD);
         MPI_Unpack(k, 2, &position, &j,
-             1, MPI_INT, MPI_COMM_WORLD);
-        printf("%d %d\n", i, j);
+             1, MPI_DOUBLE, MPI_COMM_WORLD);
+        printf("%d %lf\n", i, j);
     }
 
 }
