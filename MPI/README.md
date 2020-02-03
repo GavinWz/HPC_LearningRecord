@@ -1,4 +1,4 @@
-## MPI_Learning record
+## MPI_Learning_Record
 
 1. 程序的开始与结束
 
@@ -24,7 +24,7 @@ int MPI_Comm_size(MPI_Comm comm, int *rank)
 3. 获取进程id
 
 ```c
-int MPI_Comm_rank(MPI_Comm comm, int *rank)`
+int MPI_Comm_rank(MPI_Comm comm, int *rank)
 ```
 
 获得当前进程在制定通信域中的编号，将自身与其他程序区分。  
@@ -62,11 +62,12 @@ double MPI_Wtick(void) //查看时间的精度
 
 ```c
 int MPI_Send(void* msg_buf_p,//发送缓冲区的起始地址；
-    int msg_size, //缓冲区大小；
+    int msg_size, //缓冲区大小
     MPI_Datatype msg_type, //发送信息的数据类型
-    int dest, //目标进程的id值;
-    int tag, //消息标签;
-    MPI_Comm communicator)//通信子
+    int dest, //目标进程的id值
+    int tag, //消息标签
+    MPI_Comm communicator//通信子
+);
 ```
 
 ```c
@@ -99,7 +100,7 @@ void *location: 调用者的内存位置；
 MPI_Aint *address: 位置的对应地址
 ```
 
-10. 集合通信函数
+10. (规约)集合通信函数
 
 涉及通信子中的所有进程的通信函数称为集合通信。
 ```c                                          
@@ -110,7 +111,8 @@ int MPI_Reduce(
     MPI_Datatype datatype,  //数据类型
     MPI_OP operator,        //归约操作符
     int dest_process,       //在指定线程中返回
-    MPI_Comm comm);
+    MPI_Comm comm
+);
 ```
 
 在指定线程中对通信子中每个线程中的数据进行特定的计算(MPI_OP)，并在该线程中返回计算结果。
@@ -122,7 +124,8 @@ int MPI_Allreduce(
     int count,              //每个线程提供的数据量
     MPI_Datatype datatype,  //数据类型
     MPI_OP operator,        //归约操作符
-    MPI_Comm comm);
+    MPI_Comm comm
+);
 ```
 
 与上面类似，除去dest_process参数。在通信子的所有线程中均返回结果。   
@@ -182,7 +185,7 @@ int MPI_Gather(
 ```
 在指定线程dest_proc中收集当前线程传来的数据，保存在大小为recv_count的recv_type类型数组recv_count中
 
-14. 派生数据类型
+14. 派生数据类型 ???
 
 一个派生数据类型是由一系列的MPI基本数据类型和每个数据类型的偏移所组成的
 
@@ -210,7 +213,7 @@ int MPI_Type_create_struct(
 );
 ```
 可以使用MPI_Get_address函数来找到制定元素的内存地址
-```
+```c
 int MPI_Get_address(
     voiod* location_p,
     MPI_Aint* adddress_p
@@ -260,4 +263,99 @@ int MPI_Unpack(
 
 接收函数MPI_Recv等接收到其他线程发来的包后,需要对其进行解包操作,提取出相应的数据后才能进行下一步操作
 
+16. 组的管理
 
+组是一个进程的有序集合,在实现中可以看做是进程标识符的一个有序集合,组内的每个进程与一个整数rank相联系,序列号从0开始并且是连续的.我们可以在通信组中使用组来描述通信空间中的参与者并对这些参与者进行分级.
+
+两个特殊的预定义组:
+```
+MPI_GROUP_EMPTY: 空组的有效句柄,可以再组操作中作为一个参数使用
+MPI_GROUP_NULL: 无效句柄,在组释放时会被返回
+```
+
+* **创建**
+```c
+int MPI_Comm_group(MPI_Comm comm, MPI_Group *group); 
+/*建立一个通信组对应的新进程组. group返回组句柄*/
+int MPI_Group_rank(MPI_Group group, int *rank); 
+/*查询调用进程在进程组里的rank*/
+```
+说明: MPI不能凭空构造一个组,只能从其他以前定义的组中构造,最基本的组是与初始通信子MPI_COMM_WORLD相联系的组(可通过MPI_COMM_GROUP获得),其他的组均在该组基础上定义.
+
+```c
+int MPI_Group_incl(
+    MPI_Group old_group,  //旧进程组
+    int count,            //members数组中元素的个数 
+    int *members,         //旧进程组中需要放入新进程组进程的编号
+    MPI_Group *new_group  //新进程组
+);
+```
+基于已经存在的进程组创建一个新的进程组,并指明被包含(include)的成员进程
+
+```c
+int MPI_Group_excl(
+    MPI_Group old_group, 
+    int count,
+    int *nonmembers,
+    MPI_Group *new_group
+);
+```
+基于已经存在的进程创建一个新的进程组,并指明不被包含(exclude)的成员进程, 即新进程组包含除nonmembers之外的其它进程
+
+* **比较**
+
+对两个进程组判断其成员是否相同,次序是否一致.
+
+```c
+int MPI_Group_compare(
+    MPI_Group group1, 
+    MPI_Group group2,
+    int *result
+)
+```
+如果两个组中成员和次序完全相等,则返回**MPI_Ident**   
+如果组成员相同二次序不同,则返回**MPI_SIMILAR**   
+其它情况返回MPI_UNEQUAL
+
+* **相对编号**
+```c
+int MPI_Group_translate_ranks(
+    MPI_Group group1, 
+    int count,   //进程组1中有效编号的个数
+    int *ranks1, //进程组1中有效编号组成的数组
+    MPI_Group group2,
+    int *ranks2  //ranks1中的元素在进程组2中的对应编号
+);
+```
+检测两个不同组中相同进程的相对编号,如果属于进程组1的某个进程的编号在ranks1中,但此进程不属于进程组2,则在ranks2中对应ranks1的位置返回值为MPI_UNDEFINED;若此进程属于进程组2,则在ranks2中对应ranks1的位置返回此进程在进程组2中的编号
+
+* **集合类操作**
+```c
+int MPI_Group_union( //进程组的集合并操作
+    MPI_Group group1,
+    MPI_Group group2,
+    MPI_Group *newgroup
+);
+
+int MPI_Group_intersection( //进程组的集合交操作
+    MPI_Group group1, 
+    MPI_Group group2,
+    MPI_Group *newgroup
+);
+
+int MPI_Group_defference(  //newgroup=group2-group1
+/*进程组的集合补操作, 返回group1在group2中的相对补集*/
+    MPI_Group group1,
+    MPI_Group group2,
+    MPI_Group *newgroup
+);
+```
+
+* **释放**
+
+```
+int MPI_Group_free(MPI_Group *group);
+```
+释放指定进程组,组句柄被置为MPI_GROUP_NULL  
+ 
+函数允许任何正在使用此组的操作正常完成
