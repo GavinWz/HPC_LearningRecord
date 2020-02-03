@@ -313,9 +313,9 @@ int MPI_Group_compare(
     int *result
 )
 ```
-如果两个组中成员和次序完全相等,则返回**MPI_Ident**   
-如果组成员相同二次序不同,则返回**MPI_SIMILAR**   
-其它情况返回MPI_UNEQUAL
+如果两个组中成员和次序完全相等,则返回**MPI_IDENT**   
+如果组成员相同但次序不同,则返回**MPI_SIMILAR**   
+其它情况返回**MPI_UNEQUAL**
 
 * **相对编号**
 ```c
@@ -357,5 +357,43 @@ int MPI_Group_defference(  //newgroup=group2-group1
 int MPI_Group_free(MPI_Group *group);
 ```
 释放指定进程组,组句柄被置为MPI_GROUP_NULL  
- 
+
 函数允许任何正在使用此组的操作正常完成
+
+17. 通信子的管理
+
+* **复制**
+```c
+int MPI_Comm_dup(MPI_Comm comm, MPI_Comm *newcomm);
+```
+
+* **创建**
+```c
+int MPI_Comm_creeate(
+    MPI_Comm comm,   //旧通信子
+    MPI_Group group, //与comm相关联的组或其子集
+    MPI_Comm *new_comm //新通信子
+);
+```
+用由group所定义的通信组及一个新的上下文创建了一个新的通信自new_comm,对于不在group中的进程,函数返回MPI_COMM_NULL,所以新的通信子中包含group中的进程
+
+* **划分**
+```c
+int MPI_Comm_split(
+    MPI_Comm comm, //旧的通信子,即被划分的域
+    int color,  //子域的标识,被划分出来的每个子域都对应一个color,每个子域包含具有同样color的所有进程
+    int key, //每个子域内,进程按照key所定义的值的次序进行排列
+    MPI_Comm *new_comm
+);
+```
+函数将与comm相关的域划分为若干不相连的子域,根据color和key参数决定每个进程所处的位置
+
+* **释放**
+```c
+int MPI_Comm_free(MPI_Comm *comm)
+```
+将指定通信子的句柄置为MPI_COMM_NULL,任何使用此通信子的挂起操作都会正常完成;仅当没有对此对象的活动引用时,它才会被实际撤销
+
+
+
+
