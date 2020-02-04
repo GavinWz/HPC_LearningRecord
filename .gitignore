@@ -2,4 +2,5 @@
 *.s
 *.class
 *.out
+.vscode
 
