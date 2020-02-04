@@ -2,6 +2,8 @@
 #include<mpi.h>
 #include<stdlib.h>
 
+/*Create a num list, then hand them out to all the processors*/
+
 int main(int argc, char **argv){
     MPI_Init(&argc, &argv);
     
