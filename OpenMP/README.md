@@ -55,4 +55,7 @@ sections语句指定一个并行代码块, 并用section语句将此代码块分
     ...
 }
 ```
+6. firstprivate
+
+功能与private类似, firstprivate可继承变量原来的值, 但不保留操作后的值
 
