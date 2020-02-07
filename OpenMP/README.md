@@ -51,6 +51,9 @@ sections语句指定一个并行代码块, 并用section语句将此代码块分
 }
 ```
 
+6. omp_in_parallel
+判断当前是否处于并行状态, 返回1表示是, 返回0表示否. 
+
 6. private子句
 
 * private
