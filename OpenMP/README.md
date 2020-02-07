@@ -22,14 +22,17 @@ parallel是构造并行块的指令, 同时也可以配合其它指令如for, se
     //并行代码
 }
 ```
-
+4. num_threads(thread_num)
 ```c
 #pragma omp parallel num_threads(thread_num)
 ```
 指定执行此代码块的线程数量
 
-4. omp_get_num_procs()
+5. omp_get_num_procs()
 返回调用函数时, 可用的线程数目
+
+5. omp_get_num_threads()
+返回当前并行区域中的活动线程个数, 若在并行区域之外调用则返回0
 
 5. sections和section
 sections语句指定一个并行代码块, 并用section语句将此代码块分为多个分块, 各个分块并行执行
