@@ -12,8 +12,5 @@ int main(){
         printf("thread %d, g = %d\n", omp_get_thread_num(), g);
     }
     printf("After parallel operate, Global g = %d\n", g);
-
-
-    
     
 }
