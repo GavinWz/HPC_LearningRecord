@@ -150,3 +150,20 @@ OMP_SCHEDULE="dynamic, 5"
 * 尝试获得互斥锁
 ``bool omp_set_lock(omp_lock_t* lock);``
 尝试获得互斥锁, 成功返回1(true), 失败返回0(false)
+
+16. omp_set_dynamic
+设置是否允许在运行时动态调整并行区域的线程数
+```c
+void omp_set_dynamic(int flag);
+```
+参数为非0时,系统会自动调整线程以最佳利用系统资源.  
+当参数为0时, 动态调整被禁用.    
+此参数即相当于一个布尔型(bool)
+
+17. omp_get_dynamic
+返回当前程序是否允许动态调整
+```c
+int omp_get_dynamic();
+```
+返回非0时表示允许, 0表示不允许.
+
