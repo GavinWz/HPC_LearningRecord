@@ -31,10 +31,13 @@ parallel是构造并行块的指令, 同时也可以配合其它指令如for, se
 5. omp_get_num_procs()
 返回调用函数时, 可用的线程数目
 
-5. omp_get_num_threads()
+6. omp_get_num_threads()
 返回当前并行区域中的活动线程个数, 若在并行区域之外调用则返回0
 
-5. sections和section
+7. omp_get_max_threads()
+返回最大的线程数量, 这里的最大线程数量是指在不使用num_threads的情况下OpenMP可以创建的最大线程数量
+
+8. sections和section
 sections语句指定一个并行代码块, 并用section语句将此代码块分为多个分块, 各个分块并行执行
 ```c
 #pragma omp parallel sections
@@ -51,10 +54,10 @@ sections语句指定一个并行代码块, 并用section语句将此代码块分
 }
 ```
 
-6. omp_in_parallel
+9. omp_in_parallel
 判断当前是否处于并行状态, 返回1表示是, 返回0表示否. 
 
-6. private子句
+10. private子句
 
 * private
 将变量声明为线程私有, 声明私有之后,每个线程都获得一个该变量的副本, 线程之间不会相互影响, 各自之间不能相互访问对方的私有变量, 且原变量在并行部分不起任何作用, 值也不会因为并行代码块中的操作而改变
@@ -81,21 +84,21 @@ sections语句指定一个并行代码块, 并用section语句将此代码块分
 将一个变量分别复制一份拷贝给各个线程, 作为各个线程的私有变量, 即各个线程具有各自私有的全局对象, 而不止在并行代码块中有效.  
 此变量只能为全局变量或静态变量(static), 且threadprivate语句要紧跟在变量声明的后边
 
-7. shared
+11. shared
 将一个变量声明为共享变量, 并在多个线程内共享. 程序分配一块单独的内存给这个变量, 所有的并行线程共享这块内存空间. 在并行部分进行写操作时, 要求对共享变量进行保护, 否则不要随便使用共享变量, 尽量将共享变量换为私有变量使用.
 
-8. reduction
+12. reduction
 对一个或多个参数指定一个操作符, 然后每一个线程都会创建这个参数的私有拷贝, 在各自的线程中对其进行操作, 在并行区域结束后, 迭代指定的运算符, 并更新原参数值.
 ```c
 reduction(operator: list);
 //operator为操作符, list为一个变量或多个变量组成的数组*/
 ```
 
-9. copyin
+13. copyin
 将主线程中的变量值拷贝到各个线程的私有变量中, 但是主线程中的变量值不会改变.  
 只有被声明为threadprivate的变量才可作为copyin子句的参数
 
-10. 循环调度: schedule
+14. 循环调度: schedule
 schedule只能用于循环并行构造中, 作用是控制循环并行结构的任务调度, 将循环迭代分配给各个线程. 
 语法为:``schedule(kind[, chunk_size])``
 * 静态调度static
@@ -126,3 +129,24 @@ runtime表示根据环境变量确定上述调度策略中的某一种, 默认�
 控制schedule环境变量的是OMP_SCHEDULE环境变量, 值为上面三种类型的一种, 例如:  
 OMP_SCHEDULE="dynamic, 5"  
 表示schedule(dynamic, 5)
+
+15. 互斥锁
+* 初始化互斥锁:  
+``void omp_init_lock(omp_lock_t lock);``
+在使用锁之前要将其初始化
+
+* 销毁互斥锁:
+``void omp_destroy_lock(omp_lock_t* lock);``
+不再使用锁时, 要将其销毁
+
+* 获得互斥锁
+``void_set_lock(omp_lock_t* lock);``
+程序进入进程互斥部分的标志
+
+* 释放互斥锁
+``void omp_unset_lock(omp_lock_t* lock);``
+程序退出进程互斥部分的标志
+
+* 尝试获得互斥锁
+``bool omp_set_lock(omp_lock_t* lock);``
+尝试获得互斥锁, 成功返回1(true), 失败返回0(false)
