@@ -3,4 +3,6 @@
 *.class
 *.out
 .vscode
-
+*.exe
+*.lib
+*.exp
