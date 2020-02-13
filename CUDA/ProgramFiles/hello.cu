@@ -4,7 +4,7 @@ __global__ void myKernel(){
 }
 
 int main(){
-    myKernel<<<1, 1>>>();
-    cudaDeviceSynchronize();
+    myKernel<<<1, 2>>>();
+    // cudaDeviceSynchronize();
     return 0;
 }
