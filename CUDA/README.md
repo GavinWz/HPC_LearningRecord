@@ -7,7 +7,7 @@
 GPU并行化的工作流程:
 
 * CPU发送一种成为kernel(核函数)的函数到GPU.
-* 核函数中的线程常组织为若干干个线程块(thread block)，每个线程块中有若干个线程(thread)。
+* 核函数中的线程常组织为若干个线程块(thread block)，每个线程块中有若干个线程(thread)。
 * 核函数中的全部线程块构成一个网格(grid)，线程块的个数记为网格大小(grid size)，每个线程块中有同样数目的线程，该数目称为线程块大小(block size)。
 
 __global__是CUDA C/C++的函数修饰符, 表示该函数为一个kernel函数, 且:
