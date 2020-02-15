@@ -5,6 +5,7 @@ __global__ void myKernel(){
 
 int main(){
     myKernel<<<1, 2>>>();
-    // cudaDeviceSynchronize();
+    cudaDeviceSynchronize();
+    // cudaDeviceReset();
     return 0;
 }
