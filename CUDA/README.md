@@ -44,13 +44,7 @@ CPU+GPU的异构并行计算架构利用CPU和GPU的功能互补性，使得程�
 
 程序中用host指代CPU及其内存, 用device指代GPU及其内存.CUDA程序中既包含host程序又包含device程序,他们分别在CPU和GPU上运行. 同时,host与device之间可以进行通信.
 
-1. GPU并行化的工作流程:
-
-* CPU发送一种成为kernel(核函数)的函数到GPU.
-* 核函数中的线程常组织为若干个线程块(thread block)，每个线程块中有若干个线程(thread)。
-* 核函数中的全部线程块构成一个网格(grid)，线程块的个数记为网格大小(grid size)，每个线程块中有同样数目的线程，该数目称为线程块大小(block size)。
-
-2. nvcc的编译过程
+nvcc的编译过程
 
 ![nvcc编译过程](./Pictures/nvcc编译过程.png)
 
@@ -81,6 +75,10 @@ int main(){
 ```
 
 ### CUDA C语法
+![线程分配](./Pictures/线程分配.png)
+* 核函数中的线程常组织为若干个线程块(thread block)，每个线程块中有若干个线程(thread)。
+* 核函数中的全部线程块构成一个网格(grid)，线程块的个数记为网格大小(grid size)，每个线程块中有同样数目的线程，该数目称为线程块大小(block size)。
+
 
 1. \_\_global\_\_
 
@@ -134,6 +132,8 @@ dim3 block_size(Bx, By, Bz);
 网格大小(grid_size)在x、y、z三个方向的最大允许值分别为2^(31-1)、65535/65535
 
 线程块大小(thread_size)在x、y、z三个方向的最大允许值分别为1024、1024、64。且blockDim.x、 blockDim.y、blockDim.z的乘积不能大于1024，即无论如何分配，一个线程块最多只能有1024个线程。
+
+* 通常，一个网格会被组织成线程块的二维形式，一个线程块会被组织成线程的三维形式。
 
 4. 内存管理
 
