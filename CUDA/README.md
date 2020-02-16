@@ -152,7 +152,7 @@ dim3 block_size(Bx, By, Bz);
 cudaError_t cudaMalloc(void** devPtr, size_t size);
 ```
 
-同C语言中malloc函数，为变量分配空间。第一个参数为内存分配的对象，第二个是分配的内存空间大小。
+同C语言中malloc函数，为变量分配空间。第一个参数为内存分配的对象，第二个是分配的内存空间的**字节**大小。
 
 3. cudaMemcpy
 
