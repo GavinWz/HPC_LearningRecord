@@ -1,3 +1,4 @@
+#include "error.cuh"
 #include<stdio.h>
 __global__ void myKernel(){
     printf("Hello World.\n");
@@ -5,7 +6,7 @@ __global__ void myKernel(){
 
 int main(){
     myKernel<<<1, 2>>>();
-    cudaDeviceSynchronize();
+    CHECK(cudaDeviceSynchronize());
     // cudaDeviceReset();
     return 0;
 }
