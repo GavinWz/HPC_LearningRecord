@@ -46,6 +46,8 @@ int main(){
     float time_passed;
     cudaEventElapsedTime(&time_passed, start, end);
     printf("Time passed %f ms.\n", time_passed);
+    cudaEventDestroy(start);
+    cudaEventDestroy(end);
 
 }
 
