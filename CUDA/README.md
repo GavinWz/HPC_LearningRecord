@@ -147,6 +147,49 @@ dim3 block_size(Bx, By, Bz);
 * 不能同时用__host__和__global__修饰一个函数，即一个函数不能同时为主机函数和核函数。
 * 编译器把设备函数当做内联函数或非内联函数，可用修饰符__noinline__建议一个设备函数为非内联函数，也可以用修饰符__forceinline__建议一个设备函数为内联函数。
 
+6. 检测运行时错误
+
+* CHECK函数
+在头文件文件error.cuh中编写宏函数CHECK，输出捕获的运行时错误。   
+函数头为：
+```c
+#define CHECK(call) \
+...                 \
+...
+```
+其中call为一个CUDA运行时API函数，调用时将一个CUDA运行时API函数作为参数传进该函数即可检验此运行时API函数在运行时发生的错误，并输出错误信息。
+
+* 检查核函数
+捕捉调用核函数时可能发生的错误，需要在调用核函数之后加上如下两句：
+```c
+CHECK(cudaGetLastError());
+CHECK(cudaDeviceSynchronize());
+```
+
+7. CUDA-MEMCHECK检查内存错误
+CUDA-MEMCHECK工具集包括memcheck、rececheck、initcheck、synccheck四个工具。他们可由可执行文件cuda-memcheck调用：
+```bash
+cuda-memcheck --tool memcheck [options] app_name [options]
+cuda-memcheck --tool racecheck [options] app_name [options]
+cuda-memcheck --tool initcheck [options] app_name [options]
+cuda-memcheck --tool synccheck [options] app_name [options]
+```
+
+8. 用CUDA事件计时
+```c
+cudaEvent_t start, stop;
+cudaEventCreate(&start); //创建事件类型变量
+cudaEventCreate(&stop);
+cudaEventRecord(start); //记录事件的开始
+cudaEventQuery(start);  //查询Record是否完成事件的捕获
+cudaEventRecord(stop);  //记录事件的结束
+cudaEventSynchronize(stop); //等待记录完成
+float elapsed_time;
+cudaEventElapsedTime(&elapsed_time, start, stop);
+printf("Time = %f ms.\n", elapsed_time);
+cudaEventDestory(start);
+cudaEventDestory(stop);
+```
 
 
 ### 函数
@@ -189,4 +232,13 @@ cudaError_t为枚举类型，此类型变量有两个值：  **cudaSuccess**与*
 char* cudaGetErrorString(cudaError_t error);
 ```
 
-5. 
+5. cudaEventElapsedTime
+
+计算事件之间经过(Elapse)的时间
+```c
+__host__ cudaError_t cudaEventElapsedTime(
+    float* ms,        //返回事件执行的时间
+    cudaEvent_t start, //事件的开始
+    cudaEvent_t end    //事件的结束
+);
+```
