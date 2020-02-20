@@ -32,7 +32,7 @@ int main(){
 
     cudaEvent_t start, end;
     cudaEventCreate(&start);
-    CHECK(cudaEventCreate(&end));
+    cudaEventCreate(&end);
     cudaEventRecord(start);
     cudaEventQuery(start);
 
