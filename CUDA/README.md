@@ -44,19 +44,33 @@ CPU+GPU的异构并行计算架构利用CPU和GPU的功能互补性，使得程�
 
 程序中用host指代CPU及其内存, 用device指代GPU及其内存.CUDA程序中既包含host程序又包含device程序,他们分别在CPU和GPU上运行. 同时,host与device之间可以进行通信.
 
-nvcc的编译过程
+1. nvcc的编译过程
 
 ![nvcc编译过程](./Pictures/nvcc编译过程.png)
 
 CUDA的编译器驱动nvcc先将全部源代码分离为主机(host)代码和设备(device)代码。主机代码完全支持C++语法，而设备代码只是部分支持。
 
-nvcc先将设备代码编译为PTX(Parallel Thread Execution)伪汇编代码，再将PTX代码编译为二进制的cubin目标代码
+nvcc先将设备代码编译为PTX(Parallel Thread eXecution)伪汇编代码，再将PTX代码编译为二进制的cubin目标代码
 
-在将源代码编译为PTX代码时，需要用选项**-arch=cumpute_XY**指定一个虚拟架构的计算能力，以确定代码中能够使用的CUDA功能。
+2. nvcc编译选项
 
-在将PTX代码编译为cubin代码时，需要用选项**-code=sm_ZW**指定一个真实架构的计算能力，以确定可执行文件能使用的GPU。指定了GPU的真实架构为Z.W,对应的可执行文件只能在主版本号为Z、次版本号大于等于W的GPU中运行。
+* 在将源代码编译为PTX代码时，需要用选项``-arch=copute_XY``指定一个虚拟架构的计算能力，以确定代码中能够使用的CUDA功能。
 
-真实架构的计算能力必须大于虚拟架构的计算能力
+* 在将PTX代码编译为cubin代码时，需要用选项``-code=sm_ZW``指定一个真实架构的计算能力，以确定可执行文件能使用的GPU。指定了GPU的真实架构为Z.W,对应的可执行文件只能在主版本号为Z、次版本号大于等于W的GPU中运行。
+
+* 真实架构的计算能力必须大于虚拟架构的计算能力
+
+* 使得编译出来的可执行文件在更多的GPU中执行，可以同时指定多组计算能力，每一组用如下形式的编译选项：   
+``gencode arch=compute_XY,code=sm_ZW``
+
+* 即时编译：在运行可执行文件时，从其中保留的PTX代码中临时编译出一个cubin目标代码，编译时保留这样的PTX代码需要用如下编译选项指定虚拟架构：   
+``-gencode arch=compute_XY,code=compute_XY``
+
+* ``arch=sm_XY``等价于
+```
+-gencode arch=compute_XY,code=sm_XY
+-gencode arch=compute_XY,code=compute_XY
+```
 
 3. CUDA程序的基本框架
 
@@ -129,7 +143,7 @@ dim3 block_size(Bx, By, Bz);
 
 * 网格与线程块大小的限制
 
-网格大小(grid_size)在x、y、z三个方向的最大允许值分别为2^(31-1)、65535/65535
+网格大小(grid_size)在x、y、z三个方向的最大允许值分别为2^31-1、65535、65535
 
 线程块大小(thread_size)在x、y、z三个方向的最大允许值分别为1024、1024、64。且blockDim.x、 blockDim.y、blockDim.z的乘积不能大于1024，即无论如何分配，一个线程块最多只能有1024个线程。
 
@@ -182,6 +196,9 @@ cudaEventCreate(&start); //创建事件类型变量
 cudaEventCreate(&stop);
 cudaEventRecord(start); //记录事件的开始
 cudaEventQuery(start);  //查询Record是否完成事件的捕获
+
+operate_fun(...);
+
 cudaEventRecord(stop);  //记录事件的结束
 cudaEventSynchronize(stop); //等待记录完成
 float elapsed_time;
@@ -190,7 +207,23 @@ printf("Time = %f ms.\n", elapsed_time);
 cudaEventDestory(start);
 cudaEventDestory(stop);
 ```
+创建事件 -> 记录事件的开始 -> 计时部分代码执行 -> 记录事件的结束 -> 计算耗时
 
+**GPU计算核心**和**设备内存**之间的数据传输的传输峰值理论带宽要远大于**CPU**与**GPU**之间数据传输的理论峰值带宽，所以，想要获得可观的加速，就必须减少在数据传输上所花的时间，避免过多的数据经过PCIe传递。
+
+9. 算数强度
+
+一个计算问题的算数强度指的是其中**算数操作**的工作量与**必要的内存操作**的工作量之比
+
+10. 一个CUDA程序获得高性能的必要条件：
+* 数据传输比重小
+* 核函数的算数强度较高
+* 核函数中定义的线程数目较多
+
+所以，在优化CUDA程序时尽量做到：
+* 减少主机与设备之间的数据传输
+* 提高核函数的算数强度
+* 增大核函数的并行规模
 
 ### 函数
 
