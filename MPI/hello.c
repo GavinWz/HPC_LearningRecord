@@ -7,8 +7,7 @@ int main(int argc, char **argv){
 	int my_rank;
 	char greeting[MAX_STRING];
 
-
-	MPI_Init(&argc, &argv);  //signal of begins
+	MPI_Init(&argc, &argv);  //signal of begin
 	MPI_Comm_size(MPI_COMM_WORLD, &comm);
 	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 	
