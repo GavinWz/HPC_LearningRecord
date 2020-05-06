@@ -12,9 +12,11 @@ tick)数, 在omp程序中多个线程同时运行, 用clock计时并不能得到
 omp_get_wtime()函数返回从某一时间点到调用时所经过的时间
 
 2. for指令
+
 for指令的作用是使一个for循环在多个线程中执行, 一般for指令与parallel指令同时使用, 即parallel for. 此外还可以在parallel指令的并行块中单独使用, 在一个并行快中可以使用多个for指令. 但是单独使用for指令是没有效果的.
 
 3. parellel指令
+
 parallel是构造并行块的指令, 同时也可以配合其它指令如for, sections等一起使用. 在这个指令后需要使用一对大括号来制定并行代码块.
 ```c
 #pragma omp parallel [for | sections] [子句[子句]...]
@@ -23,21 +25,26 @@ parallel是构造并行块的指令, 同时也可以配合其它指令如for, se
 }
 ```
 4. num_threads(thread_num)
+
 ```c
 #pragma omp parallel num_threads(thread_num)
 ```
 指定执行此代码块的线程数量
 
 5. omp_get_num_procs()
+
 返回调用函数时, 可用的线程数目
 
 6. omp_get_num_threads()
+
 返回当前并行区域中的活动线程个数, 若在并行区域之外调用则返回0
 
 7. omp_get_max_threads()
+
 返回最大的线程数量, 这里的最大线程数量是指在不使用num_threads的情况下OpenMP可以创建的最大线程数量
 
 8. sections和section
+
 sections语句指定一个并行代码块, 并用section语句将此代码块分为多个分块, 各个分块并行执行
 ```c
 #pragma omp parallel sections
@@ -55,6 +62,7 @@ sections语句指定一个并行代码块, 并用section语句将此代码块分
 ```
 
 9. omp_in_parallel
+
 判断当前是否处于并行状态, 返回1表示是, 返回0表示否. 
 
 10. private子句
@@ -85,9 +93,11 @@ sections语句指定一个并行代码块, 并用section语句将此代码块分
 此变量只能为全局变量或静态变量(static), 且threadprivate语句要紧跟在变量声明的后边
 
 11. shared
+
 将一个变量声明为共享变量, 并在多个线程内共享. 程序分配一块单独的内存给这个变量, 所有的并行线程共享这块内存空间. 在并行部分进行写操作时, 要求对共享变量进行保护, 否则不要随便使用共享变量, 尽量将共享变量换为私有变量使用.
 
 12. reduction
+
 对一个或多个参数指定一个操作符, 然后每一个线程都会创建这个参数的私有拷贝, 在各自的线程中对其进行操作, 在并行区域结束后, 迭代指定的运算符, 并更新原参数值.
 ```c
 reduction(operator: list);
@@ -95,12 +105,14 @@ reduction(operator: list);
 ```
 
 13. copyin
+
 将主线程中的变量值拷贝到各个线程的私有变量中, 但是主线程中的变量值不会改变.  
 只有被声明为threadprivate的变量才可作为copyin子句的参数
 
 14. 循环调度: schedule
+
 schedule只能用于循环并行构造中, 作用是控制循环并行结构的任务调度, 将循环迭代分配给各个线程. 
-语法为:``schedule(kind[, chunk_size])``
+语法为:``schedule(kind, chunk_size)``
 * 静态调度static
 
 schedule(static, size): size为每个线程分配的迭代数, 若不给出size参数, 则程序将迭代数/总线程数作为size的值
@@ -109,8 +121,8 @@ schedule(static, size): size为每个线程分配的迭代数, 若不给出size�
 在用户没有使用schedule子句的并行循环中, 系统默认采用static方式进行调度. 
 
 * 动态调度dynamic
-schedule(dynamic, size)
-动态调度依赖程序运行状态, 无法预知哪次迭代在哪个线程中运行. 
+
+schedule(dynamic, size): 动态调度依赖程序运行状态, 无法预知哪次迭代在哪个线程中运行. 
 
 在没有指定size的情况下, 各个线程按照执行完即分配的方式进行调度, 只要还有迭代没有完成, 哪个线程开始空闲就将下一次迭代分配给它, 直到完成循环迭代
 
@@ -131,6 +143,7 @@ OMP_SCHEDULE="dynamic, 5"
 表示schedule(dynamic, 5)
 
 15. 互斥锁
+
 * 初始化互斥锁:  
 ``void omp_init_lock(omp_lock_t lock);``
 在使用锁之前要将其初始化
@@ -140,7 +153,7 @@ OMP_SCHEDULE="dynamic, 5"
 不再使用锁时, 要将其销毁
 
 * 获得互斥锁
-``void_set_lock(omp_lock_t* lock);``
+``void omp_set_lock(omp_lock_t* lock);``
 程序进入进程互斥部分的标志
 
 * 释放互斥锁
@@ -152,6 +165,7 @@ OMP_SCHEDULE="dynamic, 5"
 尝试获得互斥锁, 成功返回1(true), 失败返回0(false)
 
 16. omp_set_dynamic
+
 设置是否允许在运行时动态调整并行区域的线程数
 ```c
 void omp_set_dynamic(int flag);
@@ -161,6 +175,7 @@ void omp_set_dynamic(int flag);
 此参数即相当于一个布尔型(bool)
 
 17. omp_get_dynamic
+
 返回当前程序是否允许动态调整
 ```c
 int omp_get_dynamic();
