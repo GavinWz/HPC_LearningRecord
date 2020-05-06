@@ -1,5 +1,9 @@
 ## MPI_Learning_Record
 
+
+环境下载:  
+http://www.mpich.org/downloads/
+
 1. 程序的开始与结束
 
 ```c
@@ -19,7 +23,7 @@ int MPI_Comm_size(MPI_Comm comm, int *rank)
 
 通信子：一组可以相互发送消息的进程集合。通常由MPI_Init()在用户启动程序时， 定义由用户自动的所有进程组成的通信子， 缺省值为MPI_COMM_WORLD。这个参数是MPI通信操作函数中必不可少的参数，用户限定参加通信的进程的范围。
 
-第一个参数是通信子， 第二个参数返回进程的个数
+参数: 第一个参数是通信子， 第二个参数返回进程的个数
 
 3. 获取进程id
 
@@ -41,7 +45,7 @@ int *resultlen;  #在name中返回结果的长度
 
 5. 运行时间
 ```c
-double MPI_Wtime(void) //计算运行时间
+double MPI_Wtime(void) //获取时间
 double MPI_Wtick(void) //查看时间的精度
 ```
 
@@ -51,7 +55,7 @@ double MPI_Wtick(void) //查看时间的精度
 int MPI_Barrier(MPI_Comm comm)
 ```  
 
-7. 消息传递
+7. 时间精度
 
 
 ```c
