@@ -22,7 +22,7 @@ int main(){
     printf("Running 2 times spent  with   parallel: %lf\n", end - start);
 
     start = omp_get_wtime();
-    #pragma omp parallel  //the other way to program
+    #pragma omp parallel  //the other way to express
     {
         #pragma omp for
         for(i = 0; i < 2; i++)
