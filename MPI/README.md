@@ -84,15 +84,6 @@ int MPI_Recv(void* msg_buf_p, //缓冲区的起始地址；
     MPI_Status *status_p)//status_p对象，包含实际接收到的消息的有关信息
 ```
 
-```c
-void* msg_buf_p ： 
-int buf_size ： 
-MPI_Datatype msg_type ： 
-int dest ：
-int tag ： 
-MPI_Comm communicator ： 
-MPI_Status *status_p ： 
-```
 
 9. 地址偏移量
 
@@ -199,6 +190,7 @@ int MPI_Gather(
 a|24
 b|40
 n|48
+
 则可以用以下的派生数据类型表示这些数据项：
 
 {(MPI_DOUBLE,0),(MPI_DOUBLE,16),(MPI_INT,24)}
