@@ -1,6 +1,5 @@
 ## MPI_Learning_Record
 
-
 环境下载:  
 http://www.mpich.org/downloads/
 
@@ -21,7 +20,8 @@ int MPI_Finalize(void)
 int MPI_Comm_size(MPI_Comm comm, int *rank)
 ```
 
-通信子：一组可以相互发送消息的进程集合。通常由MPI_Init()在用户启动程序时， 定义由用户自动的所有进程组成的通信子， 缺省值为MPI_COMM_WORLD。这个参数是MPI通信操作函数中必不可少的参数，用户限定参加通信的进程的范围。
+通信子：一组可以相互发送消息的进程集合。通常由MPI_Init()在用户启动程序时， 定义由用户自动的所有进程组成的通信子，缺省值为MPI_COMM_WORLD。  
+这个参数是MPI通信操作函数中必不可少的参数，用户限定参加通信的进程的范围。
 
 参数: 第一个参数是通信子， 第二个参数返回进程的个数
 
@@ -65,25 +65,38 @@ double MPI_Wtick(void) //查看时间的精度
 8. 消息传递
 
 ```c
-int MPI_Send(void* msg_buf_p,//发送缓冲区的起始地址；
-    int msg_size, //缓冲区大小
-    MPI_Datatype msg_type, //发送信息的数据类型
+int MPI_Send(
+    void* msg_buf_p,//变量指针
+    int msg_size, //数据量
+    MPI_Datatype send_type, //发送信息的数据类型
     int dest, //目标进程的id值
-    int tag, //消息标签
+    int tag, //消息标签，0打印，1计算
     MPI_Comm communicator//通信子
 );
 ```
 
 ```c
-int MPI_Recv(void* msg_buf_p, //缓冲区的起始地址；
-    int buf_size, //缓冲区大小；
-    MPI_Datatype msg_type, //发送信息的数据类型；
-    int source, //目标进程的id值；
-    int tag, //消息标签；
+int MPI_Recv(
+    void* msg_buf_p, //变量指针
+    int buf_size, //数据量
+    MPI_Datatype recv_type, //发送信息的数据类型；
+    int source, //接收的进程的id值；
+    int tag, //消息标签；0打印，1计算
     MPI_Comm communicator， //通信子；
     MPI_Status *status_p)//status_p对象，包含实际接收到的消息的有关信息
 ```
 
+通常情况下，满足以下条件，就可以成功发送和接收消息：
+    
+    1. recv_type = send_type
+    2. recv_buf_size >= send_buf_size
+
+接收者的通配参数：
+
+* MPI_ANY_SOURSE: 当第四个参数source为此变量时，代表任何一个完成工作的进程
+* MPI_ANY_TAG: 当第五个参数tag为此变量时，代表接收任意形式的标签
+
+通配参数只有``接收者``可以使用
 
 9. 地址偏移量
 
@@ -127,14 +140,15 @@ int MPI_Allreduce(
 具体实现：在一个线程中计算出结果后，将结果发布给其他线程。
 
 MPI_OP:
-|运算符值|含义|—|运算符值|含义
-|---|---|---|---|---|
-|MPI_MAX|求最大值||MPI_LOR|逻辑或
-|MPI_MIN|求最小值||MPI_BOR|按位或
-|MPI_SUM|求累加和||MPI_LXOR|逻辑异或
-|MPI_PROD|求累乘积||MPI_BXOR|按位异或
-|MPI_LAND|逻辑与||MPI_MAXLOC|求最大值和最大值所在位置
-|MPI_BAND|按位与||MPI_MINLOC|求最小值和最小值所在位置
+
+|运算符值|含义|\||运算符值|含义|
+|:---|:---|:---:|:---|:---|
+|MPI_MAX|求最大值|\||MPI_LOR|逻辑或|
+|MPI_MIN|求最小值|\||MPI_BOR|按位或|
+|MPI_SUM|求累加和|\||MPI_LXOR|逻辑异或|
+|MPI_PROD|求累乘积|\||MPI_BXOR|按位异或|
+|MPI_LAND|逻辑与|\||MPI_MAXLOC|求最大值和最大值所在位置|
+|MPI_BAND|按位与|\||MPI_MINLOC|求最小值和最小值所在位置|
 
 11. 广播
 ```c
@@ -185,11 +199,12 @@ int MPI_Gather(
 一个派生数据类型是由一系列的MPI基本数据类型和每个数据类型的偏移所组成的
 
 假设一个进程里变量a,b,n和它们在内存中的位置如下
-变量|地址
---|--
-a|24
-b|40
-n|48
+
+|变量|地址|
+|:--:|:--:|
+|a|24|
+|b|40|
+|n|48|
 
 则可以用以下的派生数据类型表示这些数据项：
 
@@ -197,7 +212,7 @@ n|48
 
 每组数据的第二个元素是该数据项相对于起始位置的偏移, 即为当前数据与起始数据的内存地址差值。
 
-可以用MPI_Type_creaate_struct函数创建有不同基本数据类型的元素组成的派生数据类型。
+可以用MPI_Type_create_struct函数创建有不同基本数据类型的元素组成的派生数据类型。
 
 ```c
 int MPI_Type_create_struct(
@@ -208,11 +223,11 @@ int MPI_Type_create_struct(
     MPI_Datatype* new_type_p  //函数建立的新的数据类型
 );
 ```
-可以使用MPI_Get_address函数来找到制定元素的内存地址
+可以使用MPI_Get_address函数来找到指定元素的内存地址
 ```c
 int MPI_Get_address(
-    voiod* location_p,
-    MPI_Aint* adddress_p
+    void* location_p,
+    MPI_Aint* address_p
 );
 ```
 MPI_Aint是个长整数型, address_p返回location_p所指向的内存单元的地址

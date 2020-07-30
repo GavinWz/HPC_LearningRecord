@@ -12,7 +12,7 @@ int main(int argc, char **argv){
     double sum;
     MPI_Reduce(&num, &sum, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
     if(my_rank == 0)
-        printf("%lf", sum);
+        printf("Sum = %lf", sum);
 
     MPI_Finalize();
 }

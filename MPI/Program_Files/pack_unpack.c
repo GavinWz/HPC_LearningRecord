@@ -21,8 +21,7 @@ int main(int argc, char **argv){
         MPI_Pack(name, name_len, MPI_CHAR, input_buf,
             100, &position, MPI_COMM_WORLD);
         for(int target = 1; target < comm_sz; target++)
-            MPI_Send(input_buf, name_len, MPI_CHAR, target, 1, MPI_COMM_WORLD);
-
+            MPI_Send(input_buf, name_len+sizeof(int), MPI_CHAR, target, 1, MPI_COMM_WORLD);
     }
     else{
         position = 0;

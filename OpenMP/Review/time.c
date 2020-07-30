@@ -3,25 +3,15 @@
 
 void run();
 int main(){
-    int test = 10;
+    int repeat = 10;
     double begin = omp_get_wtime();
-    #pragma omp parallel sections firstprivate(begin) shared(test)
-    {
-        #pragma omp section
-        {
-            double end = omp_get_wtime();
-            test += 5;
-            printf("1. %lf  %d\n", end - begin, test);
-        }
-        #pragma omp section
-        {
-            double end = omp_get_wtime();
-            test += 15;
-            printf("2. %lf  %d\n", end - begin, test);
-        }
+    #pragma omp parallel for num_threads(6)
+    for(int i = 0; i < repeat; i++){
+        run();
     }
     double end = omp_get_wtime();
-    printf("   %lf  %d\n", end - begin, test);
+    printf("It totally spend %lf s.\n", end - begin);
+    printf("There are %d processes totally.", omp_get_num_procs());
 }
 
 void run(){
