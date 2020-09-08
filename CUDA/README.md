@@ -4,6 +4,8 @@
 
 ### CPU+GPU异构并行计算架构
 
+GPU计算不是指单独的GPU计算，而是指CPU+GPU的异构计算。
+
 CPU与GPU是两个独立的处理器，之间通过PCIe总线相连。GPU不是一个独立的运行平台，而是CPU的一个协处理器。CPU所在位置称为主机端(host)，GPU所在位置称为设备端(device)
 
 1. 评价GPU的指标
