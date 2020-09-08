@@ -4,6 +4,11 @@
 #pragma omp 指令
 ```
 
+### 编译选项
+
+``gcc -fopenmp program.c -o program && ./program``
+
+
 1. time.clock()与omp_get_wtime()
 
 clock()函数返回从“开启这个程序进程”到“程序中调用clock()函数”时之间的CPU时钟计时单元(clock
