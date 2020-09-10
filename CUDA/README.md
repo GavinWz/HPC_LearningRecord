@@ -6,6 +6,15 @@
 
 GPU计算不是指单独的GPU计算，而是指CPU+GPU的异构计算。
 
+NVIDIA各个GPU主计算能力的架构代号  
+![架构代号和计算能力](Pictures/架构代号和计算能力.png)
+
+目前常用的各种GPU
+![目前常用的各种GPU](Pictures/目前常用的各种GPU.png)
+
+CUDA版本与所支持的GPU算力
+![CUDA版本与所支持的GPU算力](Pictures/CUDA版本与所支持的GPU算力.png)
+
 CPU与GPU是两个独立的处理器，之间通过PCIe总线相连。GPU不是一个独立的运行平台，而是CPU的一个协处理器。CPU所在位置称为主机端(host)，GPU所在位置称为设备端(device)
 
 1. 评价GPU的指标
@@ -90,7 +99,7 @@ int main(){
 }
 ```
 
-### CUDA C语法
+### CUDA C++语法
 ![线程分配](./Pictures/线程分配.png)
 * 核函数中的线程常组织为若干个线程块(thread block)，每个线程块中有若干个线程(thread)。
 * 核函数中的全部线程块构成一个网格(grid)，线程块的个数记为网格大小(grid size)，每个线程块中有同样数目的线程，该数目称为线程块大小(block size)。
@@ -137,7 +146,7 @@ dim3 block_size(Bx, By, Bz);
 
 多维线程块本质上还是一维的，与多维线程指标threadId.x, threadIdy, threadId.z对应的一维线程指标为：  
 
-``tid = threadId.x * blockDim.x + threadId.y * blockDim.y + threadId.z * blickDim.z;``
+``tid = threadId.x * blockDim.x + threadId.y * blockDim.y + threadId.z * blockDim.z;``
 
 与多维线程块指标blockIdx.x, blockIdx.y, blockIdx.z相关联的线程块指标为：
 
@@ -147,7 +156,7 @@ dim3 block_size(Bx, By, Bz);
 
 网格大小(grid_size)在x、y、z三个方向的最大允许值分别为2^31-1、65535、65535
 
-线程块大小(thread_size)在x、y、z三个方向的最大允许值分别为1024、1024、64。且blockDim.x、 blockDim.y、blockDim.z的乘积不能大于1024，即无论如何分配，一个线程块最多只能有1024个线程。
+线程块大小(block_size)在x、y、z三个方向的最大允许值分别为1024、1024、64。且blockDim.x、 blockDim.y、blockDim.z的乘积不能大于1024，即无论如何分配，一个线程块最多只能有1024个线程。
 
 * 通常，一个网格会被组织成线程块的二维形式，一个线程块会被组织成线程的三维形式。
 
