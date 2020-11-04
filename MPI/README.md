@@ -64,39 +64,65 @@ double MPI_Wtick(void) //查看时间的精度
 
 8. 消息传递
 
-```c
-int MPI_Send(
-    void* msg_buf_p,//变量指针
-    int msg_size, //数据量
-    MPI_Datatype send_type, //发送信息的数据类型
-    int dest, //目标进程的id值
-    int tag, //消息标签，0打印，1计算
-    MPI_Comm communicator//通信子
-);
-```
+* 阻塞式通信
 
-```c
-int MPI_Recv(
-    void* msg_buf_p, //变量指针
-    int buf_size, //数据量
-    MPI_Datatype recv_type, //发送信息的数据类型；
-    int source, //接收的进程的id值；
-    int tag, //消息标签；0打印，1计算
-    MPI_Comm communicator， //通信子；
-    MPI_Status *status_p)//status_p对象，包含实际接收到的消息的有关信息
-```
+    源进程发送数据时必须等到数据发送到消息缓冲或者直接发送成功时才可返回， 目标进程必须接收到数据后才可执行下一句代码。
 
-通常情况下，满足以下条件，就可以成功发送和接收消息：
+    ```c
+    int MPI_Send(
+        void* msg_buf_p,//变量指针
+        int msg_size, //数据量
+        MPI_Datatype send_type, //发送信息的数据类型
+        int dest, //目标进程的id值
+        int tag, //消息标签，0打印，1计算
+        MPI_Comm communicator//通信子
+    );
+    ```
+
+    ```c
+    int MPI_Recv(
+        void* msg_buf_p, //变量指针
+        int buf_size, //数据量
+        MPI_Datatype recv_type, //发送信息的数据类型；
+        int source, //接收的进程的id值；
+        int tag, //消息标签；0打印，1计算
+        MPI_Comm communicator， //通信子；
+        MPI_Status *status_p)//status_p对象，包含实际接收到的消息的有关信息
+    ```
+
+    通常情况下，满足以下条件，就可以成功发送和接收消息：
+        
+        1. recv_type = send_type
+        2. recv_buf_size >= send_buf_size
+
+    接收者的通配参数：
+
+    * MPI_ANY_SOURSE: 当第四个参数source为此变量时，代表任何一个完成工作的进程
+    * MPI_ANY_TAG: 当第五个参数tag为此变量时，代表接收任意形式的标签
+
+    通配参数只有``接收者``可以使用
+
+    MPI_Status为一个结构体，用户可以直接访问其中的三个常用属性：
+
+    ```c
+    typedef struct {
+        ... ...
+        int MPI_SOURCE;              //消息源地址
+        int MPI_TAG;                    //消息标签
+        int MPI_ERROR;               //错误码
+        ... ...
+    } MPI_Status;
+    ```
+
+    可通过MPI_Status查询接受到的数据长度  
+    ```c
+    int MPI_Get_count(MPI_Status status, MPI_Datatype datatype, int *count);
+    ```  
+    datatype为返回的数据类型，count返回的该类型的数量
+
+* 非阻塞式通信
+
     
-    1. recv_type = send_type
-    2. recv_buf_size >= send_buf_size
-
-接收者的通配参数：
-
-* MPI_ANY_SOURSE: 当第四个参数source为此变量时，代表任何一个完成工作的进程
-* MPI_ANY_TAG: 当第五个参数tag为此变量时，代表接收任意形式的标签
-
-通配参数只有``接收者``可以使用
 
 9. 地址偏移量
 

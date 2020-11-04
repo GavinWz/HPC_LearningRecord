@@ -17,7 +17,10 @@ int main(int argc, char **argv){
         for(int source = 1; source < comm_sz; source++){
             MPI_Recv(&recv, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
             sum += recv;
-            printf("Receive num %d.\n", recv);
+            int count;
+            MPI_Get_count(&status, MPI_INT, &count);
+            printf("Receive num = %d, source = %d, tag = %d, number of MPI_INT = %d.\n", recv, status.MPI_SOURCE, status.MPI_TAG, count);
+
         }
         printf("sum = %d\n", sum);
     }
