@@ -74,7 +74,7 @@ double MPI_Wtick(void) //查看时间的精度
         int msg_size, //数据量
         MPI_Datatype send_type, //发送信息的数据类型
         int dest, //目标进程的id值
-        int tag, //消息标签，0打印，1计算
+        int tag, //消息标签，与Recv匹配
         MPI_Comm communicator//通信子
     );
     ```
@@ -85,7 +85,7 @@ double MPI_Wtick(void) //查看时间的精度
         int buf_size, //数据量
         MPI_Datatype recv_type, //发送信息的数据类型；
         int source, //接收的进程的id值；
-        int tag, //消息标签；0打印，1计算
+        int tag, //消息标签；与Send匹配
         MPI_Comm communicator， //通信子；
         MPI_Status *status_p)//status_p对象，包含实际接收到的消息的有关信息
     ```
