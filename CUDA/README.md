@@ -9,10 +9,10 @@ GPU计算不是指单独的GPU计算，而是指CPU+GPU的异构计算。
 NVIDIA各个GPU主计算能力的架构代号  
 ![架构代号和计算能力](Pictures/架构代号和计算能力.png)
 
-目前常用的各种GPU
+目前常用的各种GPU  
 ![目前常用的各种GPU](Pictures/目前常用的各种GPU.png)
 
-CUDA版本与所支持的GPU算力
+CUDA版本与所支持的GPU算力  
 ![CUDA版本与所支持的GPU算力](Pictures/CUDA版本与所支持的GPU算力.png)
 
 CPU与GPU是两个独立的处理器，之间通过PCIe总线相连。GPU不是一个独立的运行平台，而是CPU的一个协处理器。CPU所在位置称为主机端(host)，GPU所在位置称为设备端(device)
