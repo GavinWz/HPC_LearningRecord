@@ -119,6 +119,7 @@ __global__是CUDA C/C++的函数修饰符, 表示该函数为一个kernel函数,
     * block_size表示线程块大小
 
 2. 线程索引
+
 在核函数内部，程序将配置参数gird_size和block_size这两个参数值分别保存于如下两个内建变量(built-in variable)中：
 * gridDim.x: 数值于grid_size相等
 * blockDim.x: 数值与block_size相等
